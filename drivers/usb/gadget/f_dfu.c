@@ -596,6 +596,8 @@ dfu_handle(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
 	debug("req_type: 0x%x ctrl->bRequest: 0x%x f_dfu->dfu_state: 0x%x\n",
 	       req_type, ctrl->bRequest, f_dfu->dfu_state);
 
+	dfu_trigger_enum_done();
+
 	if (req_type == USB_TYPE_STANDARD) {
 		if (ctrl->bRequest == USB_REQ_GET_DESCRIPTOR &&
 		    (w_value >> 8) == DFU_DT_FUNC) {

@@ -35,6 +35,9 @@ int run_usb_dnl_gadget(int usbctrl_index, char *usb_dnl_gadget)
 		error("g_dnl_register failed");
 		return CMD_RET_FAILURE;
 	}
+#ifdef CONFIG_DFU_TIMEOUT
+	ulong time_activity_start = get_timer(0);
+#endif
 
 	while (1) {
 		if (g_dnl_detach()) {
@@ -79,6 +82,17 @@ int run_usb_dnl_gadget(int usbctrl_index, char *usb_dnl_gadget)
 				goto exit;
 			}
 		}
+
+#ifdef CONFIG_DFU_TIMEOUT
+		if (!dfu_enum_done() && dfu_get_timeout()) {
+			ulong cur_time = get_timer(time_activity_start);
+
+			if (cur_time > dfu_get_timeout()) {
+				debug("\nInactivity Timeout, Abort Dfu\n");
+				goto exit;
+			}
+		}
+#endif
 
 		WATCHDOG_RESET();
 		usb_gadget_handle_interrupts(usbctrl_index);

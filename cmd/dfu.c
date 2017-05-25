@@ -49,6 +49,10 @@ static int do_dfu(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 		dfu_show_entities();
 		goto done;
 	}
+#ifdef CONFIG_DFU_TIMEOUT
+	if (argc > 4)
+		dfu_set_timeout(simple_strtoul(argv[4], NULL, 0) * 1000);
+#endif
 
 	int controller_index = simple_strtoul(usb_controller, NULL, 0);
 
@@ -61,11 +65,18 @@ done:
 
 U_BOOT_CMD(dfu, CONFIG_SYS_MAXARGS, 1, do_dfu,
 	"Device Firmware Upgrade",
+#ifdef CONFIG_DFU_TIMEOUT
+	"<USB_controller> <interface> <dev> [list|timeout]\n"
+#else
 	"<USB_controller> <interface> <dev> [list]\n"
+#endif
 	"  - device firmware upgrade via <USB_controller>\n"
 	"    on device <dev>, attached to interface\n"
 	"    <interface>\n"
 	"    [list] - list available alt settings\n"
+#ifdef CONFIG_DFU_TIMEOUT
+	"    [timeout] - specify inactivity timeout in sec, doesn't work with list\n"
+#endif
 #ifdef CONFIG_DFU_TFTP
 	"dfu tftp <interface> <dev> [<addr>]\n"
 	"  - device firmware upgrade via TFTP\n"
