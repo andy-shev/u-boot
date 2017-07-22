@@ -22,8 +22,25 @@ Method(_WAK, 1)
     Return (Package() { Zero, Zero })
 }
 
-Scope (_SB)
+Scope (\_SB)
 {
+    /* High Performance Event Timer */
+    Device (HPET)
+    {
+        Name (_HID, EISAID("PNP0103"))
+        Name (_UID, Zero)
+        Name (_CRS, ResourceTemplate()
+        {
+            Memory32Fixed(ReadOnly, 0xFED00000, 0x00000400)
+            Interrupt(ResourceConsumer, Level, ActiveHigh, Exclusive, ,, ) { 8 }
+        })
+
+        Method (_STA)
+        {
+            Return (STA_VISIBLE)
+        }
+    }
+
     /* Real Time Clock */
     Device (RTC0)
     {
