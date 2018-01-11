@@ -164,6 +164,17 @@ Device (PCI0)
 
             Name (_STA, STA_VISIBLE)
 
+            Name (RBUF, ResourceTemplate()
+            {
+                GpioInt(Level, ActiveHigh, Exclusive, PullNone, 0,
+                    "\\_SB.PCI0.GPIO", 0, ResourceConsumer, , ) { 64 }
+            })
+
+            Method (_CRS, 0, Serialized)
+            {
+                Return (RBUF)
+            }
+
             Method (_RMV, 0, NotSerialized)
             {
                 Return (Zero)
