@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: GPL-2.0+
+
+if VENDOR_DELL
+
+choice
+	prompt "Mainboard model"
+	optional
+
+config TARGET_VENUE7_3740
+	bool "Venue 7 3740"
+	help
+	  This is the Dell Venue 7 3740 tablet. It contains a dual core Intel
+	  Atom Tangier CPU, 1 GB RAM integrated on package. There is also 8 or
+	  16 GB eMMC flash on board, Wi-Fi, Bluetooth 4 and USB controllers.
+
+endchoice
+
+source "board/dell/venue7-3740/Kconfig"
+
+endif

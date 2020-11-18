@@ -63,6 +63,9 @@ config VENDOR_CONGATEC
 config VENDOR_COREBOOT
 	bool "coreboot"
 
+config VENDOR_DELL
+	bool "Dell"
+
 config VENDOR_DFI
 	bool "dfi"
 
@@ -100,6 +103,7 @@ config INTEL_MID
 source "board/advantech/Kconfig"
 source "board/congatec/Kconfig"
 source "board/coreboot/Kconfig"
+source "board/dell/Kconfig"
 source "board/dfi/Kconfig"
 source "board/efi/Kconfig"
 source "board/emulation/Kconfig"

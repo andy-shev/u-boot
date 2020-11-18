@@ -10,6 +10,7 @@ dtb-y += bayleybay.dtb \
 	coreboot.dtb \
 	cougarcanyon2.dtb \
 	crownbay.dtb \
+	dell-venue7-3740.dtb \
 	dfi-bt700-q7x-151.dtb \
 	edison.dtb \
 	efi-x86_app.dtb \
