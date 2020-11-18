@@ -1,0 +1,6 @@
+Dell Venue 7 3740 tablet
+M:	Andy Shevchenko <andy.shevchenko@gmail.com>
+S:	Maintained
+F:	board/dell/venue7-3740
+F:	include/configs/dell-venue7-3740.h
+F:	configs/dell-venue7-3740_defconfig
