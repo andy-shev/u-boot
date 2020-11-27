@@ -1658,6 +1658,16 @@ static int dwc3_gadget_init_hw_endpoints(struct dwc3 *dwc,
 	for (i = 0; i < num; i++) {
 		u8 epnum = (i << 1) | (!!direction);
 
+		/*
+		 * REVERTME: This is a temporary hack to get Intel
+		 * Edison's USB working with mainline kernel. This hack
+		 * will be reverted once we come to conclusion about how
+		 * to describe Trace endpoints which should be ignored
+		 * by dwc3.
+		 */
+		if (epnum == 3 || (epnum >> 1) == 8)
+			continue;
+
 		dep = kzalloc(sizeof(*dep), GFP_KERNEL);
 		if (!dep)
 			return -ENOMEM;
