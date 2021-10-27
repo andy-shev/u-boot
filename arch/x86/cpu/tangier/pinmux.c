@@ -92,13 +92,24 @@ mrfld_setup_families(void *base_addr,
 	}
 }
 
+static u32 mrfld_pinconfig_read_and_update(void __iomem *bufcfg, u32 mask, u32 bits)
+{
+	u32 v, value;
+
+	value = readl(bufcfg);
+	v = (value & ~mask) | (bits & mask);
+
+	debug("bufcfg:0x%p, v:%#x bits:%#x mask:%#x\n", bufcfg, v, bits, mask);
+	return v;
+}
+
 static int mrfld_pinconfig_protected(unsigned int pin, u32 mask, u32 bits)
 {
 	struct mrfld_pinctrl *pinctrl;
 	struct udevice *dev;
 	void __iomem *bufcfg;
-	u32 v, value;
 	int ret;
+	u32 v;
 
 	ret = syscon_get_by_driver_data(X86_SYSCON_PINCONF, &dev);
 	if (ret)
@@ -110,13 +121,7 @@ static int mrfld_pinconfig_protected(unsigned int pin, u32 mask, u32 bits)
 	if (!bufcfg)
 		return -EINVAL;
 
-	value = readl(bufcfg);
-
-	v = (value & ~mask) | (bits & mask);
-
-	debug("scu: v: 0x%x p: 0x%x bits: %d, mask: %d bufcfg: 0x%p\n",
-	      v, (u32)bufcfg, bits, mask, bufcfg);
-
+	v = mrfld_pinconfig_read_and_update(bufcfg, mask, bits);
 	return scu_ipc_raw_command(IPCMSG_INDIRECT_WRITE, 0, &v, 4, NULL, 0, (u32)bufcfg, 0);
 }
 
@@ -125,8 +130,8 @@ static int mrfld_pinconfig(unsigned int pin, u32 mask, u32 bits)
 	struct mrfld_pinctrl *pinctrl;
 	struct udevice *dev;
 	void __iomem *bufcfg;
-	u32 v, value;
 	int ret;
+	u32 v;
 
 	ret = syscon_get_by_driver_data(X86_SYSCON_PINCONF, &dev);
 	if (ret)
@@ -138,12 +143,8 @@ static int mrfld_pinconfig(unsigned int pin, u32 mask, u32 bits)
 	if (!bufcfg)
 		return -EINVAL;
 
-	value = readl(bufcfg);
-	v = (value & ~mask) | (bits & mask);
+	v = mrfld_pinconfig_read_and_update(bufcfg, mask, bits);
 	writel(v, bufcfg);
-
-	debug("v: 0x%x p: 0x%x bits: %d, mask: %d bufcfg: 0x%p\n",
-	      v, (u32)bufcfg, bits, mask, bufcfg);
 
 	return 0;
 }
