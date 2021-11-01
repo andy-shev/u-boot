@@ -29,6 +29,5 @@ config BOARD_SPECIFIC_OPTIONS # dummy
 	select X86_LOAD_FROM_32_BIT
 	select INTEL_MID
 	select INTEL_TANGIER
-	imply BINMAN
 
 endif
