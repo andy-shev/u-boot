@@ -125,8 +125,9 @@ overflow1:
 	return ascii ? ascii_column + len : (groupsize * 2 + 1) * ngroups - 1;
 }
 
-int print_hex_dump(const char *prefix_str, int prefix_type, int rowsize,
-		   int groupsize, const void *buf, size_t len, bool ascii)
+static int do_print_hex_dump(const char *prefix_str, int prefix_type, int rowsize,
+			     int groupsize, const void *buf, size_t len, bool ascii,
+			     bool dbg)
 {
 	const u8 *ptr = buf;
 	int i, linelen, remaining = len;
@@ -146,15 +147,27 @@ int print_hex_dump(const char *prefix_str, int prefix_type, int rowsize,
 
 		switch (prefix_type) {
 		case DUMP_PREFIX_ADDRESS:
-			printf("%s%0*lx: %s\n", prefix_str,
-			       IS_ENABLED(CONFIG_PHYS_64BIT) ? 16 : 8,
-			       (ulong)map_to_sysmem(ptr) + i, linebuf);
+			if (dbg) {
+				debug("%s%0*lx: %s\n", prefix_str,
+				      IS_ENABLED(CONFIG_PHYS_64BIT) ? 16 : 8,
+				      (ulong)map_to_sysmem(ptr) + i, linebuf);
+			} else }
+				printf("%s%0*lx: %s\n", prefix_str,
+				       IS_ENABLED(CONFIG_PHYS_64BIT) ? 16 : 8,
+				       (ulong)map_to_sysmem(ptr) + i, linebuf);
+			}
 			break;
 		case DUMP_PREFIX_OFFSET:
-			printf("%s%.8x: %s\n", prefix_str, i, linebuf);
+			if (dbg)
+				debug("%s%.8x: %s\n", prefix_str, i, linebuf);
+			else
+				printf("%s%.8x: %s\n", prefix_str, i, linebuf);
 			break;
 		default:
-			printf("%s%s\n", prefix_str, linebuf);
+			if (dbg)
+				debug("%s%s\n", prefix_str, linebuf);
+			else
+				printf("%s%s\n", prefix_str, linebuf);
 			break;
 		}
 		if (!IS_ENABLED(CONFIG_SPL_BUILD) && ctrlc())
@@ -164,10 +177,30 @@ int print_hex_dump(const char *prefix_str, int prefix_type, int rowsize,
 	return 0;
 }
 
+int print_hex_dump(const char *prefix_str, int prefix_type, int rowsize,
+		   int groupsize, const void *buf, size_t len, bool ascii)
+{
+	return do_print_hex_dump(prefix_str, prefix_type, rowsize, groupsize,
+				 buf, len, ascii, false);
+}
+
+int debug_hex_dump(const char *prefix_str, int prefix_type, int rowsize,
+		   int groupsize, const void *buf, size_t len, bool ascii)
+{
+	return do_print_hex_dump(prefix_str, prefix_type, rowsize, groupsize,
+				 buf, len, ascii, true);
+}
+
 void print_hex_dump_bytes(const char *prefix_str, int prefix_type,
 			  const void *buf, size_t len)
 {
-	print_hex_dump(prefix_str, prefix_type, 16, 1, buf, len, true);
+	do_print_hex_dump(prefix_str, prefix_type, 16, 1, buf, len, true, false);
+}
+
+void debug_hex_dump_bytes(const char *prefix_str, int prefix_type,
+			  const void *buf, size_t len)
+{
+	do_print_hex_dump(prefix_str, prefix_type, 16, 1, buf, len, true, true);
 }
 #else
 /*
@@ -180,7 +213,18 @@ int print_hex_dump(const char *prefix_str, int prefix_type, int rowsize,
 	return -ENOSYS;
 }
 
+int debug_hex_dump(const char *prefix_str, int prefix_type, int rowsize,
+		   int groupsize, const void *buf, size_t len, bool ascii)
+{
+	return -ENOSYS;
+}
+
 void print_hex_dump_bytes(const char *prefix_str, int prefix_type,
+			  const void *buf, size_t len)
+{
+}
+
+void debug_hex_dump_bytes(const char *prefix_str, int prefix_type,
 			  const void *buf, size_t len)
 {
 }

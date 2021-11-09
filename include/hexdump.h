@@ -147,6 +147,8 @@ int hex_dump_to_buffer(const void *buf, size_t len, int rowsize, int groupsize,
  */
 int print_hex_dump(const char *prefix_str, int prefix_type, int rowsize,
 		   int groupsize, const void *buf, size_t len, bool ascii);
+int debug_hex_dump(const char *prefix_str, int prefix_type, int rowsize,
+		   int groupsize, const void *buf, size_t len, bool ascii);
 
 /**
  * print_hex_dump_bytes - shorthand form of print_hex_dump() with default params
@@ -161,6 +163,8 @@ int print_hex_dump(const char *prefix_str, int prefix_type, int rowsize,
  * and ASCII output included.
  */
 void print_hex_dump_bytes(const char *prefix_str, int prefix_type,
+			  const void *buf, size_t len);
+void debug_hex_dump_bytes(const char *prefix_str, int prefix_type,
 			  const void *buf, size_t len);
 
 #endif /* HEXDUMP_H */
