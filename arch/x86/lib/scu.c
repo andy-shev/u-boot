@@ -10,6 +10,7 @@
  * This driver enables IPC channel to SCU.
  */
 #include <dm.h>
+#include <hexdump.h>
 #include <regmap.h>
 #include <syscon.h>
 #include <asm/cpu.h>
@@ -47,6 +48,7 @@ struct scu {
  */
 static void scu_ipc_send_command(struct ipc_regs *regs, u32 cmd)
 {
+	debug("%s(): 0x%08x\n", __func__, cmd);
 	writel(cmd, &regs->cmd);
 }
 
@@ -91,12 +93,18 @@ static int scu_ipc_cmd(struct ipc_regs *regs, u32 cmd, u32 sub,
 	for (i = 0; i < inlen; i++)
 		writel(*in++, &regs->wbuf[i]);
 
+	debug_hex_dump("SCU in", DUMP_PREFIX_OFFSET, 16, 4, in, inlen * 4, false);
+
 	scu_ipc_send_command(regs, (inlen << 16) | (sub << 12) | cmd);
 	err = scu_ipc_check_status(regs);
 
 	if (!err) {
+		u32 *buf = out;
+
 		for (i = 0; i < outlen; i++)
 			*out++ = readl(&regs->rbuf[i]);
+
+		debug_hex_dump("SCU out", DUMP_PREFIX_OFFSET, 16, 4, buf, outlen * 4, false);
 	}
 
 	return err;
