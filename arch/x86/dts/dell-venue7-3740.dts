@@ -123,6 +123,8 @@
 			reg = <0xf9100000 0x100000>;
 			maximum-speed = "high-speed";
 			dr_mode = "peripheral";
+			snps,dis_u3_susphy_quirk;
+			snps,dis_u2_susphy_quirk;
 		};
 	};
 
