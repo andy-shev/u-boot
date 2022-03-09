@@ -528,17 +528,23 @@ CFLAGS_REMOVE_efi_freestanding.o := $(LTO_CFLAGS)
 # so must be renamed to dsdt_generated.c for consumption by the build system.
 ASL_TMP = $(patsubst %.c,%.asl.tmp,$@)
 
+asl_cpp_flags  = -Wp,-MD,$(depfile) -nostdinc                   \
+		 $(UBOOTINCLUDE)                                \
+		 -I$(srctree)/include                           \
+		 -I$(srctree)/board/$(BOARDDIR)                 \
+		 -D__ASSEMBLY__                                 \
+		 -undef -D__ACPI__
+
 quiet_cmd_acpi_c_asl= ASL     $<
 cmd_acpi_c_asl=         \
-	$(CPP) -x assembler-with-cpp -D__ASSEMBLY__ -D__ACPI__ \
-		-P $(UBOOTINCLUDE) -o $(ASL_TMP) $< && \
+	$(CPP) -P -E $(asl_cpp_flags) -x assembler-with-cpp -o $(ASL_TMP) $< && \
 	iasl -p $@ -I $(srctree)/board/$(BOARDDIR) -tc $(ASL_TMP) \
 		$(if $(KBUILD_VERBOSE:1=), >/dev/null) && \
-	mv $(patsubst %.c,%.hex,$@) $@
-
-$(obj)/dsdt_generated.c:    $(src)/dsdt.asl
-	$(call cmd,acpi_c_asl)
+	mv $(patsubst %.c,%.hex,$@) $@ && \
 	$(Q)sed -i -e "s,dsdt_generated_aml_code,AmlCode," $@
+
+$(obj)/dsdt_generated.c:    $(src)/dsdt.asl FORCE
+	$(call if_changed_dep,acpi_c_asl)
 
 # Bzip2
 # ---------------------------------------------------------------------------
