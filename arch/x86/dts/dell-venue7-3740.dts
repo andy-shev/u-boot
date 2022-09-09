@@ -12,7 +12,6 @@
 /include/ "rtc.dtsi"
 
 #include "tsc_timer.dtsi"
-#include "smbios.dtsi"
 
 / {
 	model = "Dell Venue 7 3740";
