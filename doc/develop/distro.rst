@@ -440,6 +440,26 @@ way in future u-boot versions.  In particular the <device type>_boot
 variables (e.g. mmc_boot, usb_boot) are a strictly internal implementation
 detail and must not be used as a public interface.
 
+Using a eMMC partition that has been formatted as a disk by Windows 10
+======================================================================
+
+Let's assume we have an (embedded) board with U-Boot and Linux OS
+installed on eMMC. Linux OS shares one of the eMMC partitions as
+a disk via USB Mass Storage protocol.
+
+It may be useful to utilize that disk to copy bootable files from
+Windows machine to the board in case someone doesn't want to erase
+stock installation on it.
+
+Unfortunately, Windows 10 doesn't provide knobs and always formats
+that disk as a whole, meaning that it creates a partition table on it
+with requested (FAT) partition. As a result U-Boot may not see any
+files on it due to nesting partition tables.
+
+The workaround may be in formatting the partition under Linux OS,
+setting up a network connection between Linux OS and Windows 10 and
+use it to copy files to the partition.
+
 .. _`Boot Loader Specification`: https://systemd.io/BOOT_LOADER_SPECIFICATION/
 
 .. sectionauthor:: (C) Copyright 2014 Red Hat Inc.
