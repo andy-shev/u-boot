@@ -8,9 +8,6 @@
 
 #include <asm/ibmpc.h>
 
-/* Memory */
-#define CONFIG_SYS_STACK_SIZE			(32 * 1024)
-
 #define CONFIG_SYS_MONITOR_LEN			(256 * 1024)
 
 /* RTC */
