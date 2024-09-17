@@ -23,4 +23,7 @@ void reset_timer(void);
 void enable_interrupts(void);
 int disable_interrupts(void);
 
+/* Implemented in $(CPU)/interrupts.c */
+int do_irqinfo(struct cmd_tbl *cmdtp, int flag, int argc, char *const argv[]);
+
 #endif
