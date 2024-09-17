@@ -55,6 +55,7 @@ void set_vector(u8 intnum, void *routine);
 void mask_irq(int irq);
 void unmask_irq(int irq);
 void specific_eoi(int irq);
+void do_irq(int irq);
 
 extern char exception_stack[];
 
